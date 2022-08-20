@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import './pages/detail';
+@import './breakpoints';
+
+@font-face {
+   font-family: 'George';
+   src: url('../assets/fonts/George\ X.otf');
+   font-weight: normal;
+}
+
+@font-face {
+   font-family: 'Suisse';
+   src: url('../assets/fonts/SuisseBPIntl-UltraLight.otf');
+   font-weight: 200;
+}
+
+@font-face {
+   font-family: 'Suisse';
+   src: url('../assets/fonts/SuisseBPIntl-Light.otf');
+   font-weight: 300;
+}
+
+@font-face {
+   font-family: 'Suisse';
+   src: url('../assets/fonts/SuisseBPIntl-Regular.otf');
+   font-weight: normal;
+}
+
+html {
+   font-family: 'Suisse';
+   font-weight: 300;
+   font-size: 16px;
+
+   &::-webkit-scrollbar {
+      display: none;
+   }
+
+   @include ultraSmall {
+      font-size: 12px;
+   }
+
+   h1,
+   h2,
+   h3,
+   h4,
+   a {
+      font-family: 'George';
+   }
+}
