@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 288 288" xmlns="http://www.w3.org/2000/svg" xmlnsSvgjs="http://svgjs.com/svgjs" xmlnsXlink="http://www.w3.org/1999/xlink">
+	<svg class="detailinformationhighlighticon detailinformationhighlighticon--arrow" width="288" height="288" visibility="inherit" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+		<path class="colorStrokecurrentColor svgStroke" d="m14.84 25.46 11.31-11.31" stroke="#fff" visibility="inherit" style="transform-origin:0 0 0" data-svg-origin="20.4950008392334 19.804998874664307" />
+		<path class="colorcurrentColor svgShape" d="m30.75 9.55-.66 2.36-.05 2.59-1.93-2.31-2.31-1.93 2.59-.05 2.36-.66z" fill="#fff" visibility="inherit" style="transform-origin:0 0 0" data-svg-origin="28.27500057220459 12.025000095367432" />
+		<path class="colorcurrentColor svgShape" d="m10.25 30.05.66-2.36.05-2.59 1.93 2.31 2.31 1.93-2.59.05-2.36.66z" fill="#fff" visibility="inherit" style="transform-origin:0 0 0" data-svg-origin="12.725000381469727 27.57499885559082" />
+		<path class="colorStrokecurrentColor svgStroke" d="M20 .5C30.77.5 39.5 9.23 39.5 20S30.77 39.5 20 39.5.5 30.77.5 20 9.23.5 20 .5z" fill="none" stroke="#fff" />
+	</svg>
+</svg>
