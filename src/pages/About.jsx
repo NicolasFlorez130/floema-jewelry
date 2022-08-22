@@ -1,16 +1,25 @@
 import React, { useContext, useEffect, useRef, useState } from "react"
 import { AboutContext } from "../App";
-import Gallery from "../components/Gallery"
 import Data from "./../components/Data";
 import Highlight from "./../components/Highlight";
-import Scrollbar from 'smooth-scrollbar';
+import Scrollbar, { ScrollbarPlugin } from 'smooth-scrollbar';
+import Gallery from "../components/Gallery";
+import gsap from "gsap";
+import { ScrollTrigger as scrollTrigger } from 'gsap/ScrollTrigger';
+import { DisableScrollPlugin } from "../utils/DisableScroll";
 
-let aux = 0;
+let aboutAux = 0;
+
+Scrollbar.use(DisableScrollPlugin);
+
+gsap.registerPlugin(scrollTrigger);
 
 const About = () => {
 
-   const [pageContent, setContent] = useState([]);
-   const [elements, setElements] = useState({
+   const about = useRef();
+
+   const [aux, setAux] = useState(0);
+   const [elements] = useState({
       gallery1: [],
       gallery2: [],
       data1: {
@@ -41,7 +50,7 @@ const About = () => {
          ],
          image: ''
       }, data4: {
-         label: "SUSTAINABILITY",
+         label: "SUSTAINA-BILITY",
          text: [
             "FLOEMA engages in its own small way to choose green solutions as much as possible.",
             "You will receive each piece in a handmade box realized by Florentine typography using eco-friendly paper (made by 90% of pure cellulose and 10% by cotton fibers), in a recycled and 100% recyclable parcel.",
@@ -50,7 +59,7 @@ const About = () => {
          ],
          image: ''
       }, highlight1: {
-         title: "Floema",
+         title: "floema",
          image_1: '',
          image_2: '',
       }, highlight2: {
@@ -60,81 +69,125 @@ const About = () => {
       }
    })
 
+   let pageContent = [];
+
    const doc = useContext(AboutContext);
 
    useEffect(() => {
 
-      if (!doc) { return }
-
-      setContent(doc.data.body)
-
-      if (pageContent.length < 1) {
-         aux++;
+      if (!doc) {
          return;
       }
 
+      pageContent = [...doc.data.body]
+
       //Content settings
       {
-         const auxObj = elements;
-
          const arrayAux1 = [];
          pageContent[0].items.forEach(photo => {
             arrayAux1.push(photo.poster.url)
          });
-         auxObj.gallery1 = arrayAux1;
+         elements.gallery1 = arrayAux1;
 
-         auxObj.data1.image = pageContent[1].primary.image.url;
+         elements.data1.image = pageContent[1].primary.image.url;
 
-         auxObj.highlight1.image_1 = pageContent[2].primary.first_image.url
-         auxObj.highlight1.image_2 = pageContent[2].primary.second_image.url
+         elements.highlight1.image_1 = pageContent[2].primary.first_image.url
+         elements.highlight1.image_2 = pageContent[2].primary.second_image.url
 
-         auxObj.data2.image = pageContent[3].primary.image.url
+         elements.data2.image = pageContent[3].primary.image.url
 
          const arrayAux2 = [];
          pageContent[4].items.forEach(poster => {
             arrayAux2.push(poster.poster.url)
          });
-         auxObj.gallery2 = arrayAux2;
+         elements.gallery2 = arrayAux2;
 
-         auxObj.data3.image = pageContent[5].primary.image.url
+         elements.data3.image = pageContent[5].primary.image.url
 
-         auxObj.data4.image = pageContent[6].primary.image.url
+         elements.data4.image = pageContent[6].primary.image.url
 
-         auxObj.highlight2.image_1 = pageContent[7].primary.first_image.url
-         auxObj.highlight2.image_2 = pageContent[7].primary.second_image.url
-
-         setElements(auxObj);
+         elements.highlight2.image_1 = pageContent[7].primary.first_image.url
+         elements.highlight2.image_2 = pageContent[7].primary.second_image.url
       }
 
-      Scrollbar.init(document.querySelector('.about > .wrapper'), { smooth: true })
+      const wrapperScroll = Scrollbar.init(document.querySelector('.about > .wrapper'), {
+         smooth: true,
+         plugins: {
+            disableScroll: {
+               direction: 'x'
+            }
+         }
+      })
+
+      scrollTrigger.scrollerProxy('.about > .wrapper', {
+         scrollTop(value) {
+            if (arguments.length) {
+               wrapperScroll.scrollTop = value;
+            }
+            return wrapperScroll.scrollTop;
+         }
+      });
+
+      wrapperScroll.addListener(scrollTrigger.update)
 
 
-      // eslint-disable-next-line  
-   }, [doc, aux])
+      const highlights = document.querySelectorAll('.highlight');
+
+      document.querySelectorAll('.highlight img').forEach((img, i) => {
+         gsap.fromTo(img, { y: 200 }, {
+            scrollTrigger: {
+               scroller: '.about > .wrapper',
+               trigger: highlights[i == 0 || i == 1 ? 0 : 1],
+               start: 'top bottom',
+               end: 'bottom top',
+               scrub: 1,
+            }, y: -50
+         })
+      })
+
+      gsap.fromTo('.about .rotable', { rotate: -5 }, {
+         scrollTrigger: {
+            scroller: '.about > .wrapper',
+            trigger: '.about .rotable',
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1,
+         }, rotate: 5
+      })
+
+      setAux(last => last += 1)
+
+      // window.
+
+   }, [doc, aboutAux])
 
    return (
-      <section className="about | bg-gray">
-         <div className="wrapper | py-24 h-[100vh]">
-            <Gallery images={elements.gallery1} />
+      <section ref={about} className="about | bg-gray text-lightblue overflow-hidden w-[100vw]">
+         <div className="wrapper | pt-24 h-[100vh]">
 
-            <h1 className=" px-6 text-6xl text-center">Creating new dialogues <br />
+            <Gallery images={elements.gallery1} id={'photos'} />
+
+            <h1 className="title | mb-24 mx-6 text-6xl text-center">Creating new dialogues <br />
                between threads and metal.</h1>
 
-            <Data info={elements.data1} />
+            <Data info={elements.data1} imgStyles={'px-6 rounded-t-full'} reversed={true} />
 
             <Highlight info={elements.highlight1} />
 
             <Data info={elements.data2} />
 
-            <Gallery images={elements.gallery2} />
+            <Gallery images={elements.gallery2} id={'posters'} />
 
-            <h2>The surprise of what is possible <br />
-               tho create from a single,
-               thin thread.</h2>
+            <div className="relative">
+               <h2 className="mb-24 mx-6 text-6xl text-center">The surprise of what is possible <br />
+                  tho create from a single,
+                  thin thread.</h2>
+               <span className="cover | absolute bg-gray bottom-[-10%] h-[110%] w-full"></span>
+            </div>
 
             <Data info={elements.data3} reversed={true} />
 
-            <Data info={elements.data4} />
+            <Data info={elements.data4} imgStyles={'rotable | px-12'} />
 
             <Highlight info={elements.highlight2} />
          </div>

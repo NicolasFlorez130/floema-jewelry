@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { App } from './App';
-
+import './scss/styles.scss'
 
 import { PrismicProvider } from '@prismicio/react'
 import { client } from './prismic'

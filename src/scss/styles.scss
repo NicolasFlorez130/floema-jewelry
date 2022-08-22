@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import './pages/detail';
 @import './breakpoints';
 
 @font-face {
@@ -29,14 +28,16 @@
    font-weight: normal;
 }
 
-html {
-   font-family: 'Suisse';
-   font-weight: 300;
-   font-size: 16px;
-
+* {
    &::-webkit-scrollbar {
       display: none;
    }
+}
+
+html {
+   font-family: 'Suisse';
+   font-weight: 300;
+   font-size: 18px;
 
    @include ultraSmall {
       font-size: 12px;
@@ -49,4 +50,5 @@ html {
    a {
       font-family: 'George';
    }
+
 }

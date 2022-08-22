@@ -4,20 +4,24 @@ import Collection from '../components/Collection';
 import { gsap } from 'gsap';
 import { ScrollTrigger as scrollTrigger } from "gsap/ScrollTrigger";
 import { ProductsContext } from "../App";
+import Scrollbar from 'smooth-scrollbar';
 
-let aux = 0, loaded = false;
+let aux = 0;
 
 sessionStorage.getItem('position') === null && sessionStorage.setItem('position', 0);
 
-const Collections = () => {
+window.scrollTo(0, window.offsetHeight);
 
-   gsap.registerPlugin(scrollTrigger)
+gsap.registerPlugin(scrollTrigger);
+
+const Collections = () => {
 
    const doc = useContext(ProductsContext);
 
    const [collections, setCollections] = useState([]);
    const [title, setTitle] = useState({})
 
+   const sliderWrapper = useRef();
    const wrapper = useRef();
    const gallery = useRef();
    const bgTitles = useRef();
@@ -37,22 +41,39 @@ const Collections = () => {
          return;
       }
 
+      const wrapperScroll = Scrollbar.init(document.querySelector('.collections > .wrapper'), { smooth: true })
+
+      wrapperScroll.setPosition(0, sessionStorage.getItem('position'));
+      wrapperScroll.track.xAxis.element.remove();
+
+      scrollTrigger.scrollerProxy('.collections > .wrapper', {
+         scrollTop(value) {
+            if (arguments.length) {
+               wrapperScroll.scrollTop = value;
+            }
+            wrapperScroll.scrollTop > 0 && sessionStorage.setItem('position', wrapperScroll.scrollTop);
+            return wrapperScroll.scrollTop;
+         }
+      });
+
+      wrapperScroll.addListener(scrollTrigger.update);
+
       const scrollConfig = {
          trigger: gallery.current,
+         scroller: '.collections > .wrapper',
          start: `bottom bottom`,
          end: `${width * .8} top`,
-         scrub: 2,
-         pin: true,
+         scrub: true,
+         pin: true
       }
 
-      gsap.to('.collectionTitles', { scrollTrigger: scrollConfig, y: height })
+      gsap.to('.collectionTitles', { scrollTrigger: scrollConfig, y: height });
+      
       const horizontalScroll = gsap.to(wrapper.current, { scrollTrigger: scrollConfig, x: -width, ease: 'none' })
-
-      window.scrollTo(0, sessionStorage.getItem('position'));
 
       let auxNum = '1';
 
-      gsap.utils.toArray('.card').forEach(card => {
+      gsap.utils.toArray('.collections .card').forEach(card => {
 
          const v1 = 15, v2 = 5, t = 40;
 
@@ -107,11 +128,10 @@ const Collections = () => {
             }, duration: .2, opacity: 1, cursor: 'pointer'
          })
 
-
          auxNum = auxNum === '1' ? '>2' : auxNum === '>2' ? '>3' : auxNum === '>3' ? '4' : auxNum === '4' ? '3>' : auxNum === '3>' ? '2>' : '1';
       })
 
-      gsap.utils.toArray('.collection').forEach((collection, i) => {
+      gsap.utils.toArray('.collections .collection').forEach((collection, i) => {
 
          function changeTitle() {
 
@@ -120,11 +140,11 @@ const Collections = () => {
                h2: `${i === 0 ? 'First' : i === 1 ? 'Second' : i === 2 ? 'Third' : 'Fourth'} Collection`
             })
 
-            gsap.to('.cover', { duration: .1, height: 0 })
+            gsap.to('.collections .cover', { duration: .1, height: 0 })
          }
 
          function hideTitle() {
-            gsap.to('.cover', { duration: .1, height: '100%' })
+            gsap.to('.collections .cover', { duration: .1, height: '100%' })
          }
 
          gsap.to(collection, {
@@ -145,17 +165,13 @@ const Collections = () => {
       // eslint-disable-next-line
    }, [doc, aux])
 
-   gsap.utils.toArray('.card').forEach(card => {
-      card.onclick = () => sessionStorage.setItem('position', window.scrollY);
-   })
-
    return (
-      <section className="collections">
-         <div className="wrapper">
+      <section className="collections | h-full">
+         <div ref={sliderWrapper} className="wrapper | h-[100vh]">
             <div ref={gallery} className="collectionGallery | bg-brown overflow-hidden w-auto">
                <CollectionsTitle ref={bgTitles} collections={collections} />
                <div className="title | absolute bottom-0 m-8 text-light">
-                  <h3 className="overflow-hidden text-xl relative whitespace-nowrap">{title.h2}<span className="cover absolute bg-brown bottom-0 left-0 w-full"></span></h3>
+                  <h3 className="overflow-hidden text-xl relative whitespace-nowrap">{title.h2}<span className="cover | absolute bg-brown bottom-0 left-0 w-full"></span></h3>
                   <h1 className="overflow-hidden text-8xl relative whitespace-nowrap">{title.h1}<span className="cover | absolute bg-brown bottom-0 left-0 w-full"></span></h1>
                </div>
                <div ref={wrapper} className="wrapper | flex h-[100vh] overflow-visible px-[10vw] w-max z-20 relative">

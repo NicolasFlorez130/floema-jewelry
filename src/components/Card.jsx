@@ -7,7 +7,6 @@ const Card = ({ item }) => {
    const nav = useNavigate();
    const card = useRef();
 
-
    function clicky() {
       const otherCards = gsap.utils.toArray('.card').filter(c => !(c === card.current));
 
@@ -23,7 +22,7 @@ const Card = ({ item }) => {
 
    return (
       <div ref={card} className="flex-none card" onClick={clicky}>
-         <img className="h-[80vw] mx-[8vw] object-cover w-[55vw]" src={item.product_image.url} alt={item.product_image.alt} />
+         <img className="aspect-[3/4] h-[80vw] mx-[8vw] object-cover" src={item.product_image.url} alt={item.product_image.alt} />
       </div>
    )
 }

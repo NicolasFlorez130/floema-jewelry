@@ -1,11 +1,10 @@
-import React, { } from "react"
+import gsap from "gsap";
+import React, { useEffect, useRef } from "react"
 import { Link } from "react-router-dom";
 
 const Home = () => {
-
    return (
-      <>
-         <h1 className="home_title">Home</h1>
+      <div className="pt-20">
          <Link to="/collections">
             <hr />
             Collections
@@ -14,7 +13,7 @@ const Home = () => {
             <hr />
             About
          </Link>
-      </>
+      </div>
 
    )
 }

@@ -7,12 +7,12 @@ import { useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger as scrollTrigger } from 'gsap/ScrollTrigger';
 import Scrollbar from 'smooth-scrollbar';
+import { DisableScrollPlugin } from '../utils/DisableScroll';
 
-let passed = false;
+gsap.registerPlugin(scrollTrigger);
+Scrollbar.use(DisableScrollPlugin);
 
 const ItemData = ({ item }) => {
-
-   gsap.registerPlugin(scrollTrigger);
 
    const wrapper = useRef();
    const container = useRef();
@@ -33,14 +33,16 @@ const ItemData = ({ item }) => {
 
       if (item) {
 
-         passed = true;
-
          const wrapper = document.querySelector('.itemData > .wrapper');
 
-         const wrapperScroll = Scrollbar.init(wrapper, { smooth: true })
-
-         wrapperScroll.setPosition(0, 0);
-         wrapperScroll.track.xAxis.element.remove();
+         const wrapperScroll = Scrollbar.init(wrapper, {
+            smooth: true,
+            plugins: {
+               disableScroll: {
+                  direction: 'x'
+               }
+            }
+         })
 
          scrollTrigger.scrollerProxy('.itemData > .wrapper', {
             scrollTop(value) {
@@ -53,37 +55,30 @@ const ItemData = ({ item }) => {
 
          wrapperScroll.addListener(scrollTrigger.update);
 
-         gsap.utils.toArray('.aboutCover').forEach(cover => {
+         gsap.utils.toArray('.itemData .cover').forEach(cover => {
             gsap.to(cover, {
                scrollTrigger: {
                   scroller: '.itemData > .wrapper',
                   trigger: cover,
-                  start: 'bottom 95%',
+                  start: 'top 80%',
                   end: '200% top',
-                  markers: true
                }, duration: .3, height: 0, ease: 'Power2.in'
             })
          })
-
-         if (document.querySelector('.gsap-marker-scroller-start')) {
-            const markers = gsap.utils.toArray('[class *= "gsap-marker"]');
-            wrapperScroll.addListener(({ offset }) => gsap.set(markers, { marginTop: -offset.y }));
-         }
       }
 
    }, [item])
 
 
    return (
-      <section ref={container} className=" itemData | font-extralight text-light">
+      <section ref={container} className=" itemData | font-light text-light">
          <div ref={wrapper} className="wrapper | h-[100vh] pb-14 pt-24 px-6">
-            {/* <Scroll_About selector={'.itemData > .wrapper'} /> */}
             <div className="imageWrapper | pb-8 relative">
                <img ref={image} onClick={switchImage} className="image | h-[126vw] m-auto object-cover opacity-0 w-[100%]" src={item.product_image.url} alt={item.alt} />
                <img className="hidden" src={item.model_image.url} alt={item.alt} />
             </div>
             <div className="title | relative">
-               <span className="aboutCover | absolute bg-brown bottom-0 h-full w-full"></span>
+               <span className="cover | absolute bg-brown bottom-0 h-[110%] w-full"></span>
                <h2 className="font-['Suisse'] text-lg uppercase">{item.collection}</h2>
                <h1 className="text-8xl">{
                   item.name.replaceAll('-', ' ').split('_').map((span, i) => {
@@ -104,7 +99,7 @@ const ItemData = ({ item }) => {
                }</h1>
             </div>
             <div className="technicDetails | py-5 relative">
-               <span className="aboutCover | absolute bg-brown bottom-0 h-full w-full"></span>
+               <span className="cover | absolute bg-brown bottom-0 h-full w-full"></span>
                <div className="sizes | flex items-center mr-6 my-6">
                   <span className="icon">
                      <img className="w-12 mr-10" src={sizes} alt="sizes icon" />
@@ -123,14 +118,15 @@ const ItemData = ({ item }) => {
                </div>
             </div>
             <div className="moreInfo | relative">
-               <span className="aboutCover | absolute bg-brown bottom-0 h-full w-full"></span>
                <div className="info | flex mb-6 mr-6">
+                  <span className="cover | absolute bg-brown bottom-0 h-full w-full"></span>
                   <p className="label | flex-none h-12 font-light min-w-[4rem] mr-6 w-min">INFO</p>
                   <div>
                      {item.description}
                   </div>
                </div>
                <div className="info | flex mr-6">
+                  <span className="cover | absolute bg-brown bottom-0 h-full w-full"></span>
                   <p className="label | flex-none h-12 font-light min-w-[4rem] mr-6 w-min">YOU SHOULD KNOW</p>
                   <div>
                      Each FLOEMA jewel is entirely handmade: any difference from the original picture evidences the unique and artisanal manufacture of the piece.

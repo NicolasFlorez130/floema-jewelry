@@ -1,18 +1,80 @@
-import React from "react"
+import gsap from 'gsap';
+import Observer from 'gsap/Observer';
+import React, { useEffect, useRef, useState } from 'react'
 
-const Gallery = ({ images }) => {
+let galleryAux = 0;
+
+gsap.registerPlugin(Observer);
+
+const Gallery = ({ images = [], id = '' }) => {
+
+   const imagesContainer = useRef();
+   const rotationAux = useRef();
+
+   const [size, setSize] = useState(0)
+
+   useEffect(() => {
+
+      if (images.length <= 0) {
+         galleryAux++;
+         return;
+      }
+
+      setSize(images.length * 34 + '%');
+
+      if (size === 0) {
+         galleryAux++;
+         return;
+      }
+
+      imagesContainer.current.style.width = size
+      rotationAux.current.style.width = size
+
+      const imageContainers = gsap.utils.toArray(`#${id} .imageContainer`);
+      const imgs = gsap.utils.toArray(`#${id} .imageContainer img`);
+
+      imageContainers.forEach((cont, i) => {
+         cont.style.transformOrigin = `${imagesContainer.current.offsetWidth / 2}px`
+         gsap.to(cont, { rotate: 360 / imageContainers.length * i })
+         gsap.to(imgs[i], { rotate: -90 })
+
+         setInterval(() => {
+         }, 2000);
+
+      })
+
+      const tl = gsap.timeline({ repeat: -1 })
+      tl.fromTo(imagesContainer.current, { rotate: 0 }, { rotate: 180, duration: imageContainers.length * 1.5, ease: 'none' });
+
+      Observer.create({
+         target: window,
+         type: 'wheel, touch, scroll, pointer',
+         onDown: () => {
+            const rotation = gsap.getProperty(rotationAux.current, 'rotation')
+            gsap.to(rotationAux.current, { duration: 3, rotate: 20 + rotation, ease: 'Power3.in' })
+         },
+         onUp: () => {
+            const rotation = gsap.getProperty(rotationAux.current, 'rotation')
+            gsap.to(rotationAux.current, { duration: 3, rotate: -20 + rotation, ease: 'Power3.in' })
+         }
+      })
+
+   }, [galleryAux])
+
    return (
-      <section className="gallery | h-[56vw] overflow-hidden mb-24 relative w-full">
-         <div className="wrapper | absolute left-0 flex">
-            {images.map((image, i) => {
-               return (
-                  <figure key={i} className="flex-none inline-block">
-                     <img src={image} alt="floema" className="h-[56vw] object-cover w-[40vw]" />
-                  </figure>
-               )
-            })}
+      <div id={id} className="overflow-hidden pt-16 flex h-[90vw] items-start justify-center">
+         <div ref={rotationAux} className="relative h-min flex items-start justify-center">
+            <div ref={imagesContainer} className={`aspect-square flex flex-none items-center justify-center relative`}>
+               {[...images, ...images].map((image, i) => {
+                  return (
+                     <figure key={i} className="imageContainer | h-max w-max absolute left-0">
+                        <img src={image} alt="floema" className="aspect-[2/3] h-[60vw] object-cover" />
+                     </figure>
+                  )
+               })}
+            </div>
          </div>
-      </section>
+      </div>
    )
 }
 

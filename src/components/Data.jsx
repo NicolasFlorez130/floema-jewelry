@@ -1,34 +1,61 @@
-import React from "react"
+import gsap from "gsap"
+import { ScrollTrigger as scrollTrigger } from "gsap/ScrollTrigger"
+import React, { Fragment } from "react"
 
-const Data = ({ reversed = false, info }) => {
+gsap.registerPlugin(scrollTrigger)
 
-    return (
-        <section className="data">
-            <div className="wrapper">
-                {!reversed ? (
-                    <>
-                        <h3>{info.label}</h3>
+const Data = ({ reversed = false, info, imgStyles = '' }) => {
 
-                        <p>{info.text.map((line, i) => {
-                            return (<span key={i} >{line}<br /></span>)
-                        })}</p>
+   document.querySelectorAll('.about .cover').forEach(cover => {
+      gsap.fromTo(cover, { height: '100%' }, {
+         scrollTrigger: {
+            scroller: '.about > .wrapper',
+            trigger: cover,
+            start: 'top bottom',
+         }, duration: 2, height: 0, ease: 'Power2.in'
+      })
+   })
 
-                        <img src={info.image} alt={info.label} />
-                    </>
-                ) : (
-                    <>
-                        <img src={info.image} alt={info.label} />
+   return (
+      <section className="data">
+         <div className="wrapper | mb-24">
+            {!reversed ? (
+               <>
+                  <div className="grid grid-cols-[25%_75%] mb-12 mx-6">
+                     <h3 className="font-['Suisse']">{info.label}</h3>
+                     <div className="relative">{info.text.map((line, i) => {
+                        return (
+                           <Fragment key={i}>
+                              <p className="dataPar | mb-4" >{line}</p>
+                              <span key={'cover' + i} className="cover | absolute bg-gray bottom-0 h-[100%] w-full"></span>
+                           </Fragment>
+                        )
+                     })}</div>
+                  </div>
 
-                        <h3>{info.label}</h3>
+                  <img className={`object-cover w-full ` + imgStyles} src={info.image} alt={info.label} />
+               </>
+            ) : (
+               <>
+                  <img className={`object-cover w-auto ` + imgStyles} src={info.image} alt={info.label} />
 
-                        <p>{info.text.map((line, i) => {
-                            return (<span key={i}>{line}<br /></span>)
-                        })}</p>
-                    </>
-                )}
-            </div>
-        </section>
-    )
+                  <div className="grid grid-cols-[25%_75%] mt-12 mx-6">
+                     <h3 className="font-['Suisse']">{info.label}</h3>
+
+                     <div className="relative">{info.text.map((line, i) => {
+                        return (
+                           <Fragment key={i}>
+                              <p className="dataPar | mb-4">{line}</p>
+                              <span className="cover | absolute bg-gray bottom-0 h-[100%] w-full"></span>
+                           </Fragment>
+                        )
+                     })}</div>
+                  </div>
+               </>
+            )}
+         </div>
+      </section>
+   )
 }
 
 export default Data
