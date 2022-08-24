@@ -1,12 +1,14 @@
-import { useEffect, useState, useRef, useContext } from "react"
+import { useEffect, useState, useRef, useContext, useMemo } from "react"
 import CollectionsTitle from "../components/CollectionsTitle";
 import Collection from '../components/Collection';
 import { gsap } from 'gsap';
 import { ScrollTrigger as scrollTrigger } from "gsap/ScrollTrigger";
 import { ProductsContext } from "../App";
 import Scrollbar from 'smooth-scrollbar';
+import Nav from './../components/Nav';
+import { setScrollSmooth } from "../utils/utils";
 
-let aux = 0;
+let collectionsAux = 0;
 
 sessionStorage.getItem('position') === null && sessionStorage.setItem('position', 0);
 
@@ -16,9 +18,9 @@ gsap.registerPlugin(scrollTrigger);
 
 const Collections = () => {
 
-   const doc = useContext(ProductsContext);
+   const doc = useContext(useMemo(() => ProductsContext, [ProductsContext]));
 
-   const [collections, setCollections] = useState([]);
+   const [collections, setCollections] = useState(() => []);
    const [title, setTitle] = useState({})
 
    const sliderWrapper = useRef();
@@ -28,35 +30,28 @@ const Collections = () => {
 
    useEffect(() => {
 
-      if (!doc) { return }
+      doc?.data && setCollections(doc.data.body);
 
-      setCollections(doc.data.body);
+      if (collections.length <= 0) { collectionsAux++ }
+
+   }, [doc, collectionsAux])
+
+   useEffect(() => {
+
+      if (collections.length <= 0) return;
 
       const height = bgTitles.current.offsetHeight - gallery.current.offsetHeight;
       const width = wrapper.current.offsetWidth - gallery.current.offsetWidth;
 
-
-      if (width <= 0 || height <= 0) {
-         aux++;
-         return;
-      }
-
-      const wrapperScroll = Scrollbar.init(document.querySelector('.collections > .wrapper'), { smooth: true })
-
-      wrapperScroll.setPosition(0, sessionStorage.getItem('position'));
-      wrapperScroll.track.xAxis.element.remove();
-
-      scrollTrigger.scrollerProxy('.collections > .wrapper', {
-         scrollTop(value) {
-            if (arguments.length) {
-               wrapperScroll.scrollTop = value;
-            }
+      //scroll settings
+      const wrapperScroll = setScrollSmooth(document.querySelector('.collections > .wrapper'), 'xy', 'x',
+         () => {
             wrapperScroll.scrollTop > 0 && sessionStorage.setItem('position', wrapperScroll.scrollTop);
-            return wrapperScroll.scrollTop;
          }
-      });
+      )
+      wrapperScroll.setPosition(0, sessionStorage.getItem('position'));
 
-      wrapperScroll.addListener(scrollTrigger.update);
+      //gsap settings
 
       const scrollConfig = {
          trigger: gallery.current,
@@ -68,11 +63,10 @@ const Collections = () => {
       }
 
       gsap.to('.collectionTitles', { scrollTrigger: scrollConfig, y: height });
-      
+
       const horizontalScroll = gsap.to(wrapper.current, { scrollTrigger: scrollConfig, x: -width, ease: 'none' })
 
       let auxNum = '1';
-
       gsap.utils.toArray('.collections .card').forEach(card => {
 
          const v1 = 15, v2 = 5, t = 40;
@@ -162,15 +156,15 @@ const Collections = () => {
 
       })
 
-      // eslint-disable-next-line
-   }, [doc, aux])
+   }, [collections])
 
    return (
       <section className="collections | h-full">
+         <Nav buttonValue={'About'} color={'text-light'} />
          <div ref={sliderWrapper} className="wrapper | h-[100vh]">
             <div ref={gallery} className="collectionGallery | bg-brown overflow-hidden w-auto">
-               <CollectionsTitle ref={bgTitles} collections={collections} />
-               <div className="title | absolute bottom-0 m-8 text-light">
+               <CollectionsTitle ref={bgTitles} collections={collections} opacity={true} />
+               <div className="title | absolute bottom-0 m-6 text-light">
                   <h3 className="overflow-hidden text-xl relative whitespace-nowrap">{title.h2}<span className="cover | absolute bg-brown bottom-0 left-0 w-full"></span></h3>
                   <h1 className="overflow-hidden text-8xl relative whitespace-nowrap">{title.h1}<span className="cover | absolute bg-brown bottom-0 left-0 w-full"></span></h1>
                </div>

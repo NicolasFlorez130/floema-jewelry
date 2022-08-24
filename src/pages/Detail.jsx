@@ -1,15 +1,15 @@
-import React, { useContext, useEffect, useState } from "react"
+import React, { useContext, useEffect, useMemo, useState } from "react"
 import { useParams } from "react-router-dom"
 import ItemData from "../components/ItemData";
 import { ProductsContext } from "../App";
-import gsap from "gsap";
 
 const Detail = () => {
 
    const { collection, name } = useParams();
 
-   const doc = useContext(ProductsContext);
-   const [item, setItem] = useState();
+   const doc = useContext(useMemo(() => ProductsContext));
+   const [screen, setScreen] = useState();
+   const [item, setItem] = useState(() => null);
 
    const NotFoundScreen = ({ error }) => (
       <section className="errorPage">
@@ -17,31 +17,29 @@ const Detail = () => {
       </section>
    )
 
-   gsap.fromTo('.detailsContainer', { opacity: 0 }, { duration: .1, opacity: 1 })
+   useEffect(() => {
+
+      if (!doc) return;
+
+      const col = doc?.data.body.find(coll => coll.primary.name.toLowerCase() === collection),
+         result = col?.items.find(item_ => item_.name.toLowerCase() === name)
+
+      setItem(result);
+
+   }, [doc])
 
    useEffect(() => {
 
-      try {
-         const coll = doc.data.body.find(coll => coll.primary.name.toLowerCase() === collection);
-         if (!coll) {
-            setItem(<NotFoundScreen error={"collection not found."} />)
+      if (item === null) return;
 
-         } else {
-            const item = coll.items.find(item => item.name.toLowerCase() === name)
+      setScreen(item ? <ItemData item={item} /> : <NotFoundScreen error={"element not found."} />)
 
-            setItem(item ? <ItemData item={item} /> : <NotFoundScreen error={"element not found."} />)
-         }
-      } catch (error) {
-         console.log('Still loading... c:');
-      }
-
-      // eslint-disable-next-line
-   }, [doc])
+   }, [item])
 
    return (
       <div className=" bg-brown">
          <div className="detailsContainer">
-            {item}
+            {screen}
          </div>
       </div>
    )

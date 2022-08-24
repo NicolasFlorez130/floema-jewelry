@@ -10,59 +10,59 @@ import logo from '/logo.svg'
 
 const ProductsContext = createContext();
 const AboutContext = createContext();
+const HomeContext = createContext();
 
 function App() {
 
    const [productPage] = useSinglePrismicDocument('collections');
    const [aboutPage] = useSinglePrismicDocument('about')
+   const [homePage] = useSinglePrismicDocument('home')
 
    const [products, setProducts] = useState(null)
    const [about, setAbout] = useState(null)
+   const [home, setHome] = useState(null)
 
    useEffect(() => {
 
-      if (productPage && aboutPage) {
+      if (homePage && productPage && aboutPage) {
+         homePage.id && setHome(homePage)
          productPage.id && setProducts(productPage);
          aboutPage.id && setAbout(aboutPage)
       }
 
-   }, [productPage, aboutPage])
+   }, [homePage, productPage, aboutPage])
 
    return (
       <div className="App | font-light">
-         <nav className="fixed flex justify-between p-6 top-0 w-full z-10">
-            <img src={logo} className="w-2/5" alt="Floema logo" />
-            <div>Button placeholder</div>
-         </nav>
-         <Preloader />
-         <HashRouter>
-            <Routes>
-               <Route path='/' element={<Home />} />
-            </Routes>
-            <Routes>
-               <Route path='/collections' element={
-                  <ProductsContext.Provider value={products}>
-                     <Collections />
-                  </ProductsContext.Provider>
-               } />
-            </Routes>
-            <Routes>
-               <Route path='/details/:collection/:name' element={
-                  <ProductsContext.Provider value={products}>
-                     <Detail />
-                  </ProductsContext.Provider>
-               } />
-            </Routes>
-            <Routes>
-               <Route path='/about' element={
-                  <AboutContext.Provider value={about}>
-                     <About />
-                  </AboutContext.Provider>
-               } />
-            </Routes>
-         </HashRouter>
+         <ProductsContext.Provider value={products}>
+            <Preloader />
+            <HashRouter>
+               <Routes>
+                  <Route path='/' element={
+                     <AboutContext.Provider value={about}>
+                        <HomeContext.Provider value={home}>
+                           <Home />
+                        </HomeContext.Provider>
+                     </AboutContext.Provider>
+                  } />
+               </Routes>
+               <Routes>
+                  <Route path='/collections' element={<Collections />} />
+               </Routes>
+               <Routes>
+                  <Route path='/details/:collection/:name' element={<Detail />} />
+               </Routes>
+               <Routes>
+                  <Route path='/about' element={
+                     <AboutContext.Provider value={about}>
+                        <About />
+                     </AboutContext.Provider>
+                  } />
+               </Routes>
+            </HashRouter>
+         </ProductsContext.Provider>
       </div >
    );
 }
 
-export { App, ProductsContext, AboutContext };
+export { App, ProductsContext, AboutContext, HomeContext };

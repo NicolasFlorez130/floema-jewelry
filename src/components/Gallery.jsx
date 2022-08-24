@@ -38,9 +38,6 @@ const Gallery = ({ images = [], id = '' }) => {
          gsap.to(cont, { rotate: 360 / imageContainers.length * i })
          gsap.to(imgs[i], { rotate: -90 })
 
-         setInterval(() => {
-         }, 2000);
-
       })
 
       const tl = gsap.timeline({ repeat: -1 })

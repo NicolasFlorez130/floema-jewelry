@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger as scrollTrigger } from 'gsap/ScrollTrigger';
 import Scrollbar from 'smooth-scrollbar';
-import { DisableScrollPlugin } from '../utils/DisableScroll';
+import { allowMarkers, DisableScrollPlugin, setScrollSmooth } from '../utils/utils';
 
 gsap.registerPlugin(scrollTrigger);
 Scrollbar.use(DisableScrollPlugin);
@@ -28,32 +28,12 @@ const ItemData = ({ item }) => {
    }
 
    useEffect(() => {
+      
       gsap.fromTo(image.current, { y: '-100vh' }, { duration: .8, y: 0, ease: 'power3.in', opacity: 1 })
 
 
       if (item) {
-
-         const wrapper = document.querySelector('.itemData > .wrapper');
-
-         const wrapperScroll = Scrollbar.init(wrapper, {
-            smooth: true,
-            plugins: {
-               disableScroll: {
-                  direction: 'x'
-               }
-            }
-         })
-
-         scrollTrigger.scrollerProxy('.itemData > .wrapper', {
-            scrollTop(value) {
-               if (arguments.length) {
-                  wrapperScroll.scrollTop = value;
-               }
-               return wrapperScroll.scrollTop;
-            }
-         });
-
-         wrapperScroll.addListener(scrollTrigger.update);
+         setScrollSmooth(document.querySelector('.itemData > .wrapper'), 'y', 'x');
 
          gsap.utils.toArray('.itemData .cover').forEach(cover => {
             gsap.to(cover, {
@@ -133,7 +113,7 @@ const ItemData = ({ item }) => {
                   </div>
                </div>
             </div>
-            <div className="buttons | my-6 relative">
+            <div className="buttons | pt-12 relative">
                <a href="https://www.floemajewelry.com/" className="text-4xl" >Shop It <span className="font-['Suisse']">↗</span></a>
                <Link to={'/collections'}>
                   <button className="block border-[1px] border-light border-solid m-auto mt-14 px-12 py-6 rounded-[100%]">CLOSE</button>
