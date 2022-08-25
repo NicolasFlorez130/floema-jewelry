@@ -1,25 +1,39 @@
 import gsap from "gsap";
 import Draggable from "gsap/Draggable";
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react"
-import { AboutContext, HomeContext, ProductsContext } from "../App";
+import { HomeContext, ProductsContext } from "../App";
 import CollectionsTitle from "../components/CollectionsTitle";
 import Nav from "../components/Nav";
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'
+import { ColorContext } from '../App';
+import { hide, show } from "../components/Transition";
+
 
 let homeAux = 0;
 
 gsap.registerPlugin(Draggable);
 
-const Home = () => {
+const Home = ({ charged }) => {
 
    const doc = useContext(useMemo(() => HomeContext));
    const doc2 = useContext(useMemo(() => ProductsContext));
+
+   const setColor = useContext(useMemo(() => ColorContext));
 
    const [images, setImages] = useState(() => []);
    const [titles, setTitles] = useState(() => []);
 
    const title = useRef()
    const titlesCont = useRef()
+
+   const nav = useNavigate();
+
+   async function buttonClick() {
+      setColor('text-light')
+      await show();
+      nav('/collections')
+      hide()
+   }
 
    useEffect(() => {
       doc?.data.images.length > 0 && setImages(doc.data.images);
@@ -31,20 +45,17 @@ const Home = () => {
 
    useEffect(() => {
 
-      if (images.length <= 0 || titles.length <= 0) return;
+      if (images.length <= 0 || titles.length <= 0 || !charged) return;
 
       gsap.utils.toArray('.home .backgroundImage').forEach(img => {
          const random = Math.random();
-         gsap.fromTo(img, { opacity: 0, scale: 1 + random }, { duration: .5 + random, opacity: 1, scale: 1, delay: random, ease: '"power4.in"' })
+         gsap.fromTo(img, { opacity: 0, scale: 1 + random }, { duration: 1 * random, opacity: 1, scale: 1, delay: .5 + random, ease: '"power4.in"' })
       })
 
-      const titlesTween = gsap.to('.home .titlesContainer', { duration: 30, yPercent: -50, ease: 'none', repeat: -1 })
-      const imagesTween = gsap.to('.home .imagesContainerSm', { duration: 40, yPercent: 50, ease: 'none', repeat: -1 })
+      gsap.to('.home .titlesContainer', { duration: 30, yPercent: -50, ease: 'none', repeat: -1 })
+      gsap.to('.home .imagesContainerSm', { duration: 40, yPercent: 50, ease: 'none', repeat: -1 })
 
-      window.onmousedown = () => { titlesTween.pause(); imagesTween.pause() }
-      window.onmouseup = () => { titlesTween.resume(); imagesTween.resume() }
-
-   }, [images])
+   }, [images, charged])
 
 
    return (
@@ -69,11 +80,9 @@ const Home = () => {
             <CollectionsTitle collections={titles} styles={'relative'} />
          </div>
          <div className="flex justify-center items-end h-[100vh] w-full">
-            <Link to='/collections'>
-               <button className="relative font-['Suisse'] border-2 border-light bottom-0 mb-6 py-4 px-16 rounded-[50%] text-light w-max z-30">
-                  DISCOVER COLLECTIONS
-               </button>
-            </Link>
+            <button onClick={buttonClick} className="relative font-['Suisse'] border-2 border-light bottom-0 mb-6 py-4 px-16 rounded-[50%] text-light w-max z-30">
+               DISCOVER COLLECTIONS
+            </button>
          </div>
       </section>
    )

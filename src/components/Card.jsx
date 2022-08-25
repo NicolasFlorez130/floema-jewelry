@@ -11,13 +11,15 @@ const Card = ({ item }) => {
       const otherCards = gsap.utils.toArray('.card').filter(c => !(c === card.current));
 
       gsap.to(otherCards, { duration: .8, opacity: 0, ease: 'power3.out' })
-      gsap.to(card.current, { duration: 1, rotate: 0, y: '-100vh', ease: "power3.in" })
-      gsap.to('.collectionTitles', { duration: .5, opacity: 0, ease: "power3.in" })
-      gsap.to('.title', { duration: .8, top: '100%', ease: "power3.in" })
+      gsap.to('.collections .title', { duration: .8, top: '100%', ease: "power3.in" })
+      gsap.to('.collections .collectionTitles', { duration: .5, opacity: 0, ease: "power3.in" })
+      gsap.to('.collections nav', { duration: 1, top: '-40%', ease: "power3.in" })
+      gsap.to(card.current, {
+         duration: 1, rotate: 0, y: '-100vh', ease: "power3.in", onComplete: () => {
+            nav(`/details/${item.collection.toLowerCase()}/${item.name.toLowerCase()}`)
 
-      setTimeout(() => {
-         nav(`/details/${item.collection.toLowerCase()}/${item.name.toLowerCase()}`)
-      }, 1000);
+         }
+      })
    }
 
    return (

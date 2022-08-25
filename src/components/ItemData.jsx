@@ -1,5 +1,5 @@
-import React from 'react'
-import { Link } from 'react-router-dom';
+import React, { useContext, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom';
 import sizes from '../assets/icons/sizes.svg'
 import star from '../assets/icons/star.svg'
 import { useRef } from 'react';
@@ -7,12 +7,18 @@ import { useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger as scrollTrigger } from 'gsap/ScrollTrigger';
 import Scrollbar from 'smooth-scrollbar';
-import { allowMarkers, DisableScrollPlugin, setScrollSmooth } from '../utils/utils';
+import { DisableScrollPlugin, setScrollSmooth } from '../utils/utils';
+import { ColorContext } from '../App';
+import { hide, show } from './Transition';
 
 gsap.registerPlugin(scrollTrigger);
 Scrollbar.use(DisableScrollPlugin);
 
 const ItemData = ({ item }) => {
+
+   const setColor = useContext(useMemo(() => ColorContext));
+
+   const nav = useNavigate();
 
    const wrapper = useRef();
    const container = useRef();
@@ -27,10 +33,16 @@ const ItemData = ({ item }) => {
       tl.to(image.current, { duration: .5, rotateY: 0, scaleY: 1, ease: 'power3.out' })
    }
 
-   useEffect(() => {
-      
-      gsap.fromTo(image.current, { y: '-100vh' }, { duration: .8, y: 0, ease: 'power3.in', opacity: 1 })
+   async function buttonClick() {
+      setColor('text-orange')
+      await show();
+      nav('/collections')
+      hide()
+   }
 
+   useEffect(() => {
+
+      gsap.fromTo(image.current, { y: '-100vh' }, { duration: .8, y: 0, ease: 'power3.in', opacity: 1 })
 
       if (item) {
          setScrollSmooth(document.querySelector('.itemData > .wrapper'), 'y', 'x');
@@ -49,7 +61,6 @@ const ItemData = ({ item }) => {
 
    }, [item])
 
-
    return (
       <section ref={container} className=" itemData | font-light text-light">
          <div ref={wrapper} className="wrapper | h-[100vh] pb-14 pt-24 px-6">
@@ -58,7 +69,7 @@ const ItemData = ({ item }) => {
                <img className="hidden" src={item.model_image.url} alt={item.alt} />
             </div>
             <div className="title | relative">
-               <span className="cover | absolute bg-brown bottom-0 h-[110%] w-full"></span>
+               <span className="cover | absolute bg-brown bottom-0 h-[100%] w-full"></span>
                <h2 className="font-['Suisse'] text-lg uppercase">{item.collection}</h2>
                <h1 className="text-8xl">{
                   item.name.replaceAll('-', ' ').split('_').map((span, i) => {
@@ -115,9 +126,7 @@ const ItemData = ({ item }) => {
             </div>
             <div className="buttons | pt-12 relative">
                <a href="https://www.floemajewelry.com/" className="text-4xl" >Shop It <span className="font-['Suisse']">↗</span></a>
-               <Link to={'/collections'}>
-                  <button className="block border-[1px] border-light border-solid m-auto mt-14 px-12 py-6 rounded-[100%]">CLOSE</button>
-               </Link>
+               <button onClick={buttonClick} className="block border-[1px] border-light border-solid m-auto mt-14 px-12 py-6 rounded-[100%]">CLOSE</button>
             </div>
          </div>
       </section >

@@ -8,6 +8,7 @@ import gsap from "gsap";
 import { ScrollTrigger as scrollTrigger } from 'gsap/ScrollTrigger';
 import { DisableScrollPlugin, setScrollSmooth } from "../utils/utils";
 import Nav from './../components/Nav';
+import { hide } from "../components/Transition";
 
 
 Scrollbar.use(DisableScrollPlugin);
@@ -154,9 +155,6 @@ const About = () => {
             scrub: 1,
          }, rotate: 5
       })
-
-      return () => { };
-
    }, [elements.highlight2.image_2])
 
 

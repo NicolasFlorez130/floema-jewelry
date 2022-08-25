@@ -7,6 +7,7 @@ import { ProductsContext } from "../App";
 import Scrollbar from 'smooth-scrollbar';
 import Nav from './../components/Nav';
 import { setScrollSmooth } from "../utils/utils";
+import { hide } from "../components/Transition";
 
 let collectionsAux = 0;
 
@@ -155,11 +156,10 @@ const Collections = () => {
          })
 
       })
-
    }, [collections])
 
    return (
-      <section className="collections | h-full">
+      <section className="collections | h-full relative">
          <Nav buttonValue={'About'} color={'text-light'} />
          <div ref={sliderWrapper} className="wrapper | h-[100vh]">
             <div ref={gallery} className="collectionGallery | bg-brown overflow-hidden w-auto">
