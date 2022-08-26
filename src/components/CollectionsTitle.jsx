@@ -3,7 +3,7 @@ import React, { forwardRef } from "react"
 const CollectionsTitle = ({ collections = [], opacity = false, styles = '' }, ref) => {
 
    return (
-      <div ref={ref} className={"collectionTitles | absolute text-light w-full z-10 bottom-0 " + styles}>
+      <div ref={ref} className={"collectionTitles | absolute cursor-default text-light w-full z-10 bottom-0 " + styles}>
          {
             [...collections].reverse().map((collection, i) => {
                return (

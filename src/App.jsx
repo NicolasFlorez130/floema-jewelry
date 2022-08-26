@@ -24,6 +24,7 @@ function App() {
    const [home, setHome] = useState(null)
 
    const [color, setColor] = useState(() => 'text-brown')
+   const [resize, setResize] = useState(() => 0)
 
    useEffect(() => {
 

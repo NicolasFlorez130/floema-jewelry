@@ -22,6 +22,20 @@ const Gallery = ({ images = [], id = '' }) => {
 
       setSize(images.length * 34 + '%');
 
+      const mm = gsap.matchMedia();
+
+      mm.add('(min-width: 640px)', () => {
+         setSize(images.length * 25 + '%');
+      })
+
+      mm.add('(min-width: 1024px)', () => {
+         setSize(images.length * 20 + '%');
+      })
+
+      mm.add('(min-width: 1536px)', () => {
+         setSize(images.length * 14 + '%');
+      })
+
       if (size === 0) {
          galleryAux++;
          return;
@@ -59,13 +73,15 @@ const Gallery = ({ images = [], id = '' }) => {
    }, [galleryAux])
 
    return (
-      <div id={id} className="overflow-hidden pt-16 flex h-[90vw] items-start justify-center">
+      <div id={id} className="overflow-hidden pt-16 flex h-[90vw] items-start justify-center
+         sm:h-[60vw] | lg:h-[50vw] | xl:h-[35vw]">
          <div ref={rotationAux} className="relative h-min flex items-start justify-center">
             <div ref={imagesContainer} className={`aspect-square flex flex-none items-center justify-center relative`}>
                {[...images, ...images].map((image, i) => {
                   return (
                      <figure key={i} className="imageContainer | h-max w-max absolute left-0">
-                        <img src={image} alt="floema" className="aspect-[2/3] h-[60vw] object-cover" />
+                        <img src={image} alt="floema" className="aspect-[2/3] h-[60vw] object-cover
+                           sm:h-[40vw] | lg:h-[30vw] | 2xl:h-[20vw]" />
                      </figure>
                   )
                })}

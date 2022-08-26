@@ -24,7 +24,8 @@ const Card = ({ item }) => {
 
    return (
       <div ref={card} className="flex-none card" onClick={clicky}>
-         <img className="aspect-[3/4] h-[80vw] mx-[8vw] object-cover" src={item.product_image.url} alt={item.product_image.alt} />
+         <img className="aspect-[3/4] h-[80vw] max-h-[50vh] mx-[8vw] object-cover
+         sm:h-[60vw] | lg:h-[40vw] lg:mx-[6vw] xl:mx-[4vw]" src={item.product_image.url} alt={item.product_image.alt} />
       </div>
    )
 }

@@ -1,7 +1,7 @@
 import { React } from 'react'
 import Card from './Card';
 
-const Collection = ({ array, setTitle, index }) => {
+const Collection = ({ array }) => {
 
    return (
       <div id={array.primary.name} className="collection | flex flex-none items-center">

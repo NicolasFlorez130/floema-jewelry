@@ -7,10 +7,13 @@ gsap.registerPlugin(scrollTrigger)
 const Data = ({ reversed = false, info, imgStyles = '' }) => {
 
    return (
-      <section className="data">
-         <div className="wrapper | mb-24">
-            <img className={`object-cover mb-12 w-full ${imgStyles} ${reversed ? 'block' : 'hidden'}`} src={info.image} alt={info.label} />
-            <div className="grid grid-cols-[25%_75%] mx-6">
+      <section className="data | m-auto">
+         <div className="wrapper | mb-24
+            lg:grid lg:grid-cols-2 lg:items-center">
+            <img className={`object-cover mb-12 w-full
+               lg:w-full lg:object-contain lg:m-0 lg:self-center ${imgStyles} ${reversed ? 'block' : 'hidden'}`} src={info.image} alt={info.label} />
+            <div className={`grid grid-cols-[25%_75%] mx-6 lg:max-w-[600px] 
+               ${reversed ? 'justify-self-start' : 'justify-self-end'}`}>
                <h3 className="break-words font-['Suisse'] pr-4">{info.label}</h3>
                <div className="relative">{info.text.map((line, i) => {
                   return (
@@ -21,7 +24,8 @@ const Data = ({ reversed = false, info, imgStyles = '' }) => {
                   )
                })}</div>
             </div>
-            <img className={`object-cover mt-12 w-full ${imgStyles} ${reversed ? 'hidden' : 'block'}`} src={info.image} alt={info.label} />
+            <img className={`object-cover mt-12 w-full 
+               lg:w-full lg:object-contain lg:m-0 lg:self-center ${imgStyles} ${reversed ? 'hidden' : 'block'}`} src={info.image} alt={info.label} />
          </div>
       </section>
    )

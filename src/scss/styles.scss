@@ -39,8 +39,16 @@ html {
    font-weight: 300;
    font-size: 16px;
 
-   @include ultraSmall {
-      font-size: 12px;
+   @include medium {
+      font-size: 18px;
+   }
+
+   @include large {
+      font-size: 20px;
+   }
+
+   @include wide {
+      font-size: 28px;
    }
 
    h1,

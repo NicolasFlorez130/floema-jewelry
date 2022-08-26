@@ -4,10 +4,8 @@ import Collection from '../components/Collection';
 import { gsap } from 'gsap';
 import { ScrollTrigger as scrollTrigger } from "gsap/ScrollTrigger";
 import { ProductsContext } from "../App";
-import Scrollbar from 'smooth-scrollbar';
 import Nav from './../components/Nav';
 import { setScrollSmooth } from "../utils/utils";
-import { hide } from "../components/Transition";
 
 let collectionsAux = 0;
 
@@ -63,7 +61,7 @@ const Collections = () => {
          pin: true
       }
 
-      gsap.to('.collectionTitles', { scrollTrigger: scrollConfig, y: height });
+      gsap.to('.collectionTitles', { scrollTrigger: scrollConfig, y: height, ease: 'none' });
 
       const horizontalScroll = gsap.to(wrapper.current, { scrollTrigger: scrollConfig, x: -width, ease: 'none' })
 
@@ -132,22 +130,23 @@ const Collections = () => {
 
             setTitle({
                h1: collection.id,
-               h2: `${i === 0 ? 'First' : i === 1 ? 'Second' : i === 2 ? 'Third' : 'Fourth'} Collection`
+               h2: `${i === 0 ? 'First' : i === 1 ? 'Second' : i === 2 ? 'Third' : 'Fourth'} Collection`,
+               p: collections[i]?.primary.description
             })
 
-            gsap.to('.collections .cover', { duration: .1, height: 0 })
+            gsap.to('.collections .cover', { duration: .3, height: 0 })
          }
 
          function hideTitle() {
-            gsap.to('.collections .cover', { duration: .1, height: '100%' })
+            gsap.to('.collections .cover', { duration: .3, height: '100%' })
          }
 
          gsap.to(collection, {
             scrollTrigger: {
                trigger: collection,
                containerAnimation: horizontalScroll,
-               start: 'top 30%',
-               end: 'bottom 70%',
+               start: 'top center',
+               end: 'bottom 60%',
                onEnter: () => changeTitle(),
                onLeave: () => hideTitle(),
                onEnterBack: () => changeTitle(),
@@ -156,6 +155,7 @@ const Collections = () => {
          })
 
       })
+
    }, [collections])
 
    return (
@@ -165,10 +165,14 @@ const Collections = () => {
             <div ref={gallery} className="collectionGallery | bg-brown overflow-hidden w-auto">
                <CollectionsTitle ref={bgTitles} collections={collections} opacity={true} />
                <div className="title | absolute bottom-0 m-6 text-light">
-                  <h3 className="overflow-hidden text-xl relative whitespace-nowrap">{title.h2}<span className="cover | absolute bg-brown bottom-0 left-0 w-full"></span></h3>
+                  <h2 className="overflow-hidden text-xl relative whitespace-nowrap
+                  xl:hidden">{title.h2}<span className="cover | absolute bg-brown bottom-0 left-0 w-full"></span></h2>
                   <h1 className="overflow-hidden text-8xl relative whitespace-nowrap">{title.h1}<span className="cover | absolute bg-brown bottom-0 left-0 w-full"></span></h1>
+                  <p className="hidden mt-2 max-w-[600px] text-xs w-[40vw]
+                  xl:block">{title.p}<span className="cover | absolute bg-brown bottom-0 left-0 w-full"></span></p>
                </div>
-               <div ref={wrapper} className="wrapper | flex h-[100vh] overflow-visible px-[10vw] w-max z-20 relative">
+               <div ref={wrapper} className="wrapper | flex h-[100vh] overflow-visible px-[10vw] relative w-max z-20
+                  sm:px-[20vw] | lg:px-[40vw]">
                   {
                      collections.map((collection, i) => (
                         <Collection array={collection} index={i} setTitle={setTitle} key={"collection " + i} />

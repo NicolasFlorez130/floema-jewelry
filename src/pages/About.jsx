@@ -8,12 +8,13 @@ import gsap from "gsap";
 import { ScrollTrigger as scrollTrigger } from 'gsap/ScrollTrigger';
 import { DisableScrollPlugin, setScrollSmooth } from "../utils/utils";
 import Nav from './../components/Nav';
-import { hide } from "../components/Transition";
+import Observer from "gsap/Observer";
 
 
 Scrollbar.use(DisableScrollPlugin);
 
 gsap.registerPlugin(scrollTrigger);
+gsap.registerPlugin(Observer);
 
 const About = () => {
 
@@ -118,6 +119,8 @@ const About = () => {
 
       if (elements.highlight2.image_2 === '') return;
 
+      const mm = gsap.matchMedia();
+
       //scroll settings
       setScrollSmooth(document.querySelector('.about > .wrapper'), '', 'x');
 
@@ -134,15 +137,15 @@ const About = () => {
          })
       })
 
-      gsap.utils.toArray('.highlight img').forEach((img, i) => {
-         gsap.fromTo(img, { y: 200 }, {
+      gsap.utils.toArray('.highlight img').forEach(image => {
+         gsap.to(image, {
             scrollTrigger: {
                scroller: '.about > .wrapper',
-               trigger: highlights[i == 0 || i == 1 ? 0 : 1],
+               trigger: image,
                start: 'top bottom',
                end: 'bottom top',
                scrub: 1,
-            }, y: -50
+            }, y: -100, ease: 'none'
          })
       })
 
@@ -155,6 +158,31 @@ const About = () => {
             scrub: 1,
          }, rotate: 5
       })
+
+      mm.add('(min-width: 1024px)', () => {
+         gsap.utils.toArray('.about img').forEach(image => {
+            gsap.fromTo(image, { y: -50 }, {
+               scrollTrigger: {
+                  scroller: '.about > .wrapper',
+                  trigger: image,
+                  start: 'top bottom',
+                  end: 'bottom top',
+                  scrub: 1,
+               }, y: 50, ease: 'none'
+            })
+         })
+
+         Observer.create({
+            target: window,
+            type: 'scroll, touch, wheel, pointer',
+            onStopDelay: .1,
+            onUp: () => gsap.to('.data img:not(.rotable)', { duration: 1, skewX: 1 }),
+            onDown: () => gsap.to('.data img:not(.rotable)', { duration: 1, skewX: -1 }),
+            onStop: () => gsap.to('.data img:not(.rotable)', { duration: 1, skewX: 0, ease: 'power3.in' })
+         })
+
+      })
+
    }, [elements.highlight2.image_2])
 
 
@@ -168,7 +196,7 @@ const About = () => {
             <h1 className="title | mb-24 mx-6 text-6xl text-center">Creating new dialogues <br />
                between threads and metal.</h1>
 
-            <Data info={elements.data1} imgStyles={'px-6 rounded-t-full'} reversed={true} />
+            <Data info={elements.data1} imgStyles={'m-auto max-w-[600px] px-6 rounded-t-full lg:justify-self-end lg:pr-0'} reversed={true} />
 
             <Highlight info={elements.highlight1} />
 
@@ -178,7 +206,7 @@ const About = () => {
 
             <div className="relative">
                <h2 className="mb-24 mx-6 text-6xl text-center">The surprise of what is possible <br />
-                  tho create from a single,
+                  tho create from a single, <br />
                   thin thread.</h2>
                <span className="cover | absolute bg-gray bottom-[-10%] h-[110%] w-full"></span>
             </div>
