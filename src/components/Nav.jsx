@@ -6,7 +6,7 @@ import { ColorContext } from '../App';
 
 const Nav = ({ color, buttonValue }) => {
 
-   const setColor = useContext(useMemo(() => ColorContext));
+   const setColor = useContext(ColorContext);
 
    const button = useRef();
 

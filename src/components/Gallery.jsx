@@ -66,7 +66,7 @@ const Gallery = ({ images = [], id = '' }) => {
          },
          onUp: () => {
             const rotation = gsap.getProperty(rotationAux.current, 'rotation')
-            gsap.to(rotationAux.current, { duration: 3, rotate: -20 + rotation, ease: 'Power3.in' })
+            gsap.to(rotationAux.current, { duration: 3, rotate: -30 + rotation, ease: 'Power3.in' })
          }
       })
 

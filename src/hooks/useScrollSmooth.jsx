@@ -1,10 +1,9 @@
-import gsap from "gsap";
-import { ScrollTrigger as scrollTrigger } from "gsap/ScrollTrigger";
-import { ScrollbarPlugin } from "smooth-scrollbar";
+import gsap from 'gsap';
+import { ScrollTrigger as scrollTrigger } from 'gsap/ScrollTrigger';
+import { ScrollbarPlugin } from 'smooth-scrollbar';
 import Scrollbar from 'smooth-scrollbar';
 
-gsap.registerPlugin(scrollTrigger)
-
+gsap.registerPlugin(scrollTrigger);
 
 class DisableScrollPlugin extends ScrollbarPlugin {
    static pluginName = 'disableScroll';
@@ -22,16 +21,17 @@ class DisableScrollPlugin extends ScrollbarPlugin {
    }
 }
 
+Scrollbar.use(DisableScrollPlugin);
 
-function setScrollSmooth(object, hide = '', disable = '', script = () => { }) {
+const useScrollSmooth = (object, hide = '', disable = '', script = () => {}) => {
    const wrapperScroll = Scrollbar.init(object, {
       smooth: true,
       plugins: {
          disableScroll: {
-            direction: disable
-         }
-      }
-   })
+            direction: disable,
+         },
+      },
+   });
 
    hide.includes('x') && wrapperScroll.track.xAxis.element.remove();
    hide.includes('y') && wrapperScroll.track.yAxis.element.remove();
@@ -43,24 +43,12 @@ function setScrollSmooth(object, hide = '', disable = '', script = () => { }) {
          }
          script();
          return wrapperScroll.scrollTop;
-      }
+      },
    });
 
    wrapperScroll.addListener(scrollTrigger.update);
 
    return wrapperScroll;
-}
+};
 
-
-function allowMarkers(scrollInit) {
-   if (document.querySelector('.gsap-marker-scroller-start')) {
-      const markers = gsap.utils.toArray('[class *= "gsap-marker"]');
-
-      scrollInit.addListener(({ offset }) => {
-         gsap.set(markers, { marginTop: -offset.y })
-      });
-   }
-}
-
-
-export { DisableScrollPlugin, setScrollSmooth, allowMarkers }
+export default useScrollSmooth;

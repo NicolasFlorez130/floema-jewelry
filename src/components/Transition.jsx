@@ -1,5 +1,5 @@
 import gsap from 'gsap';
-import React from 'react'
+import React, { useEffect } from 'react'
 
 let colorAux = { value: 'text-light' };
 
