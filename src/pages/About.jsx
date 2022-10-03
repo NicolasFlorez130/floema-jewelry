@@ -10,8 +10,7 @@ import Nav from './../components/Nav';
 import Observer from 'gsap/Observer';
 import useScrollSmooth from '../hooks/useScrollSmooth';
 
-gsap.registerPlugin(scrollTrigger);
-gsap.registerPlugin(Observer);
+
 
 const About = () => {
    const about = useRef();
